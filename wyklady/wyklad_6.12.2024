@@ -1,0 +1,124 @@
+WYKŁAD 6.12.2024
+1. ViewModel
+
+ViewModel w Androidzie jest komponentem architektury MVVM (Model-View-ViewModel). Jego główną rolą jest zarządzanie danymi, które są niezależne od cyklu życia aktywności lub fragmentu, co oznacza, że dane przechowywane w ViewModelu przetrwają zmiany konfiguracji, takie jak obroty ekranu. Dzięki temu unika się utraty danych i ponownego załadowania w przypadku takich zmian.
+
+    Przechowywanie danych: ViewModel przechowuje dane, które są wymagane do obsługi UI (interfejsu użytkownika). Zamiast trzymać dane bezpośrednio w Activity czy Fragment, przenosimy je do ViewModelu, co zapewnia lepszą separację logiki od interfejsu użytkownika.
+
+    Metody dostępowe: Dane w ViewModelu są modyfikowane i dostępne za pomocą metod dostępowych. Mogą to być zarówno metody do pobierania danych, jak i do ich modyfikacji. Dzięki temu dane mogą być łatwo modyfikowane w ramach logiki aplikacji, a zmiany są automatycznie przekazywane do UI (np. za pomocą LiveData).
+
+2. Compose
+
+Jetpack Compose to nowoczesna biblioteka UI dla Androida, która umożliwia tworzenie interfejsów użytkownika w sposób deklaratywny. Komponenty Compose mogą bezpośrednio współpracować z ViewModelami, co pozwala na utrzymanie oddzielnej logiki i danych od UI.
+
+    Integracja z ViewModel: Komponenty Compose mogą obserwować dane przechowywane w ViewModelu i reagować na ich zmiany w sposób deklaratywny. Na przykład, można używać LiveData lub State do synchronizacji danych między ViewModel a UI, co sprawia, że interfejs użytkownika jest automatycznie aktualizowany, gdy dane się zmieniają.
+
+    Przechowywanie danych w Compose: ViewModel działa jako centralne miejsce przechowywania stanu aplikacji, który może być używany przez różne komponenty UI (np. w widoku, który jest zbudowany za pomocą Compose). Używając Compose, możemy łatwo połączyć logikę UI i ViewModel, umożliwiając dynamiczne renderowanie interfejsu użytkownika w zależności od stanu aplikacji.
+
+3. LiveData
+
+LiveData to specjalny typ danych, który reaguje na zmiany i powiadamia obserwatorów o tych zmianach. Jest to komponent z Jetpacku, który jest szeroko wykorzystywany w połączeniu z ViewModel, ponieważ zapewnia sposób na dynamiczne aktualizowanie interfejsu użytkownika, gdy dane się zmieniają.
+
+    Reaktywność: LiveData jest "reaktywne", co oznacza, że obserwatorzy (np. Activity lub Fragment) są informowani o każdej zmianie w danych. To pozwala na automatyczną aktualizację UI bez konieczności ręcznego zarządzania tym procesem.
+
+    Przechowywanie stanu: LiveData przechowuje dane w sposób bezpieczny i wydajny. Gdy dane są zmieniane, np. w ViewModel, LiveData powiadamia UI, aby mogło się ono zaktualizować. Dodatkowo LiveData jest świadome cyklu życia komponentów, dzięki czemu nie musimy się martwić o wycieki pamięci, ponieważ obserwatorzy są automatycznie odłączani, gdy komponenty (np. Activity lub Fragment) są niszczone.
+    
+    1. zapewnia, że stan interfejsu uzytkownika sa zgodny z aktualnym stanem danych. livedata powiadamia obiekty observer, gdy zmienia sie stan cyklu zycia.
+    2. brak wyciekow pamieci. obserwatorzy sa zwiazani z obiektami cyklu zycia. 
+    3. brak bledow z powodu zatrzymanych aktywnosci. jesli cykl zycia obserwatora jest niektywny, nie otrzymuje zadnych zdarzen livedata.
+    4. komponenty intefejsu uzytkownika jedynie ... (slajd z wykladu)
+    
+    
+    W aplikacjach opartych na JetackCompose  wykorzystuje sie state stateflow lub composeflow. Rownież można tworzyć aplikacje oparte na livedata lecz jest to rzadziej spotykane. 
+
+4. Programowanie reaktywne
+
+Programowanie reaktywne to paradygmat programowania, który koncentruje się na reagowaniu na zmiany danych w czasie rzeczywistym. W kontekście aplikacji na Androida, programowanie reaktywne umożliwia tworzenie aplikacji, które reagują na zmiany w danych w sposób asynchroniczny i w czasie rzeczywistym.
+
+    Observable: Jednym z głównych elementów programowania reaktywnego jest model obserwatora, w którym dane są "obserwowane", a kiedy się zmieniają, powiadamiane są inne części systemu. W Androidzie jest to realizowane przez komponenty takie jak LiveData, State czy Flow, które umożliwiają obserwowanie i reagowanie na zmiany danych.
+
+    Reaktywne strumienie danych: Strumienie danych, takie jak Flow w Kotlinie, pozwalają na tworzenie asynchronicznych strumieni, które mogą emitować wartości w czasie rzeczywistym. Zaletą tego podejścia jest możliwość przetwarzania dużych ilości danych w sposób deklaratywny, bez potrzeby zarządzania ręcznie wątkami.
+
+    RxJava: Chociaż LiveData i Flow są preferowane w nowszych aplikacjach, RxJava to popularna biblioteka do programowania reaktywnego, która również jest używana w Androidzie do zarządzania strumieniami danych i reagowania na ich zmiany. RxJava umożliwia tworzenie złożonych łańcuchów operacji na strumieniach, co może być bardzo pomocne w bardziej złożonych scenariuszach.
+5. Packaging - Struktura Pakietów w Aplikacji
+
+Packaging w kontekście architektury oprogramowania odnosi się do strategii organizacji kodu w ramach aplikacji, aby zapewnić jej modularność, łatwość utrzymania i rozwoju. Zgodnie z tą strategią, aplikacja powinna być podzielona na logiczne jednostki, które mogą być rozwijane niezależnie, a jednocześnie współpracują ze sobą. Omówię teraz różne podejścia do pakowania kodu, w tym Package by Future, oraz podział na różne typy.
+Package by Future
+
+Strategia „Package by Future” oznacza, że struktura pakietów w aplikacji powinna odzwierciedlać kluczowe pojęcia z domeny biznesowej, a nie tylko techniczne aspekty systemu. Oznacza to, że aplikacja jest organizowana w taki sposób, aby odpowiadała rzeczywistym funkcjom, które użytkownik wykonuje, a nie jedynie na podstawie technologii czy frameworków, z których korzysta.
+Przykład:
+
+W aplikacji e-commerce, pakiety mogą być podzielone na:
+
+    User Management: funkcje związane z rejestracją użytkowników, logowaniem, zarządzaniem kontami.
+    Order Management: obsługa procesów składania zamówień, realizacji zamówień.
+    Payment Processing: integracja z systemami płatności.
+
+Każdy z tych pakietów będzie koncentrować się na określonym obszarze biznesowym, niezależnie od technologii wykorzystywanych w danym module.
+Podział Pakietów
+1. Podział przez typ
+
+Podział przez typ oznacza organizowanie pakietów w zależności od charakterystyki kodu lub technologii, które są wykorzystywane.
+
+    Ze względu na język: Jeśli aplikacja używa wielu języków programowania, można podzielić kod na pakiety według języka. Na przykład, jeśli aplikacja używa zarówno Java, jak i Kotlin, można mieć oddzielne pakiety dla kodu napisanego w każdym z tych języków.
+        Przykład:
+            com.example.app.java – pakiet zawierający kod w Javie.
+            com.example.app.kotlin – pakiet zawierający kod w Kotlinie.
+
+    Ze względu na framework: Jeśli aplikacja korzysta z wielu frameworków, kod może być podzielony według używanego frameworka. Na przykład, jeżeli w aplikacji używamy zarówno frameworku Spring, jak i Android SDK, pakiety mogą być zorganizowane na podstawie tych technologii.
+        Przykład:
+            com.example.app.spring – kod zależny od Springa.
+            com.example.app.android – kod zależny od Androida.
+
+    Ze względu na funkcje: To podejście polega na organizowaniu kodu w pakiety, które odpowiadają funkcjom aplikacji. Na przykład, w aplikacji e-commerce można utworzyć pakiety, które odpowiadają różnym funkcjom, takim jak zarządzanie użytkownikami, przetwarzanie płatności czy obsługa zamówień.
+        Przykład:
+            com.example.app.payment – kod odpowiedzialny za płatności.
+            com.example.app.shipping – kod odpowiedzialny za zarządzanie wysyłkami.
+            com.example.app.inventory – kod odpowiedzialny za zarządzanie stanem magazynowym.
+
+2. Podział przez warstwę
+
+Pakowanie przez warstwę polega na organizowaniu kodu w zależności od poziomu architektury systemu. Warstwy w systemie mogą obejmować:
+
+    Warstwę prezentacji (UI),
+    Warstwę logiki biznesowej,
+    Warstwę dostępu do danych (DAO),
+    Warstwę integracji.
+
+Przykładowa struktura aplikacji:
+
+    com.example.app.ui – warstwa odpowiedzialna za interfejs użytkownika.
+    com.example.app.service – warstwa logiki biznesowej (np. przetwarzanie płatności, logika zamówień).
+    com.example.app.repository – warstwa dostępu do danych (np. interakcja z bazą danych).
+
+3. Podział przez ekran
+
+W tym podejściu aplikacja jest dzielona na pakiety zgodnie z logiką ekranów w aplikacji mobilnej lub interfejsu webowego. Każdy ekran (widok) w aplikacji może mieć oddzielny pakiet, który zawiera wszystkie związane z nim komponenty: kontrolery, modele, widoki.
+
+Przykładowy podział:
+
+    com.example.app.home – kod odpowiadający za ekran główny aplikacji.
+    com.example.app.settings – kod odpowiadający za ekran ustawień.
+    com.example.app.profile – kod odpowiadający za ekran profilu użytkownika.
+
+Zalety różnych podejść do pakowania
+
+    Package by Future:
+        Ułatwia skalowanie aplikacji w przyszłości, ponieważ pozwala na logiczne rozdzielenie funkcji.
+        Zwiększa czytelność kodu, gdyż struktura pakietów odwzorowuje rzeczywiste funkcje biznesowe.
+
+    Package by Type:
+        Pomaga w organizowaniu kodu, gdy projekt korzysta z wielu technologii (np. Java i Kotlin, różne frameworki).
+        Ułatwia zarządzanie zależnościami technologicznymi.
+
+    Package by Layer:
+        Zapewnia dobrą separację między warstwami aplikacji, co ułatwia utrzymanie i testowanie kodu.
+        Pomaga w logicznej organizacji kodu, umożliwiając łatwiejszą modyfikację warstw bez wpływu na inne.
+
+    Package by Screen:
+        Ułatwia pracę nad poszczególnymi ekranami w aplikacji.
+        Pomaga w izolowaniu logiki związaną z konkretnymi widokami, co sprzyja lepszej organizacji kodu.
+  
+
+
+
