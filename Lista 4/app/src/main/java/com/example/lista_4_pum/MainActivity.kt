@@ -111,13 +111,11 @@ fun FinalScoreScreen(score: Int, totalQuestions: Int) {
             style = MaterialTheme.typography.displayMedium,
             modifier = Modifier.padding(vertical = 16.dp)
         )
-        Button(
-            onClick = {
-                // Możesz dodać logikę resetowania quizu
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text("Spróbuj ponownie")
-        }
     }
 }
+
+// pytania
+// co to state -
+// co to obserwator i za co jest odpowiedzialny -
+// co to jest mutableStateOf -
+// za co odpowiada remember -
