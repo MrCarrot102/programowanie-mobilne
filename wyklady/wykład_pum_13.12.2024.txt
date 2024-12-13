@@ -1,0 +1,8 @@
+Wykład 13.12.2024 
+
+Presentation Layer Architectura Pattern
+  Mvx 
+    Model - stan, logika biznesowa, struktury danych.
+    View - UI.
+    X - logika biznesowa, kontrola przepływu danych. 
+    
