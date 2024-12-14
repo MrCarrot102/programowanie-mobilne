@@ -4,50 +4,66 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.example.lista_3_pum.Adapter.GradeListAdapter;
+import com.example.lista_3_pum.Exercise.ExerciseList;
+import com.example.lista_3_pum.Generator.Data;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class E2Fragment extends Fragment {
-
-    private RecyclerView recyclerView;
-    private TaskListAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_e2, container, false);
 
-        // Inicjalizacja RecyclerView
-        recyclerView = view.findViewById(R.id.recyclerViewTasks);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // Pobranie danych
-        List<TaskList> taskLists = getTaskLists();
+        // Generate dummy data
+        List<ExerciseList> exerciseLists = Data.generateDummyData();
 
-        // Przypisanie adaptera
-        adapter = new TaskListAdapter(taskLists);
+        // Calculate averages
+        Map<String, Float> subjectAverages = calculateAverageGrades(exerciseLists);
+
+        // Set adapter
+        GradeListAdapter adapter = new GradeListAdapter(subjectAverages);
         recyclerView.setAdapter(adapter);
 
         return view;
     }
 
-    // Funkcja do tworzenia przykładowych danych
-    private List<TaskList> getTaskLists() {
-        List<TaskList> taskLists = new ArrayList<>();
+    private Map<String, Float> calculateAverageGrades(List<ExerciseList> exerciseLists) {
+        Map<String, Float> subjectAverages = new HashMap<>();
+        Map<String, Integer> subjectCounts = new HashMap<>();
 
-        // Dodanie przykładowych danych
-        taskLists.add(new TaskList("Matematyka", 1, 4.0, 10));
-        taskLists.add(new TaskList("Matematyka", 2, 3.5, 8));
-        taskLists.add(new TaskList("PUM", 1, 5.0, 12));
-        taskLists.add(new TaskList("Fizyka", 1, 4.5, 9));
+        for (ExerciseList list : exerciseLists) {
+            String subjectName = list.getSubject().getName();
+            float grade = list.getGrade();
 
-        return taskLists;
+            // Dodaj ocenę do istniejącego przedmiotu lub inicjalizuj
+            subjectAverages.put(subjectName, subjectAverages.getOrDefault(subjectName, 0f) + grade);
+            subjectCounts.put(subjectName, subjectCounts.getOrDefault(subjectName, 0) + 1);
+        }
+
+        for (Map.Entry<String, Float> entry : subjectAverages.entrySet()) {
+            String subject = entry.getKey();
+            float totalGrade = entry.getValue() != null ? entry.getValue() : 0f; // Zabezpieczenie przed null
+            int count = subjectCounts.getOrDefault(subject, 0); // Bezpieczne uzyskanie liczby przedmiotów
+
+            if (count > 0) {
+                subjectAverages.put(subject, totalGrade / count); // Oblicz średnią tylko, jeśli count > 0
+            }
+        }
+
+        return subjectAverages;
     }
 }
